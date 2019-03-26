@@ -1,2 +1,3 @@
-# mini-shop-spring
-Mini Shopping Online
+# Mini Shopping Online
+
+Spring Fucking Java
