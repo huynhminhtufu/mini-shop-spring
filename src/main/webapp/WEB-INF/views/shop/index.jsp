@@ -30,6 +30,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
                         <th scope="col">Action</th>
                     </tr>
                     </thead>
@@ -39,6 +40,7 @@
                             <th scope="row">${row.product.id}</th>
                             <td>${row.product.name}</td>
                             <td>${row.quantity}</td>
+                            <td>$${row.product.price}</td>
                             <td>
                                 <a href="/shop/order?id=${row.product.id}&quantity=1"><button class="btn">+</button></a>
                                 <a href="/shop/order?id=${row.product.id}&quantity=-1"><button class="btn">-</button></a>
@@ -50,6 +52,9 @@
                 </table>
             </c:if>
             <c:if test="${myCart != null && myCart.size() > 0}">
+                <div class="alert alert-primary">
+                    Total: $${total} (<i>added $1 shipping fee per item</i>)
+                </div>
                 <a href="/shop/checkout"><button class="btn btn-primary">Checkout now!</button></a>
             </c:if>
         </div>

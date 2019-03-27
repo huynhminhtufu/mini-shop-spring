@@ -3,6 +3,9 @@ package com.mrhmt.controllers;
 import com.mrhmt.entities.Category;
 import com.mrhmt.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -23,10 +26,35 @@ public class AdminCategoryController {
     private CategoryRepository categoryRepository;
 
     @RequestMapping(value={"", "/index"})
-    public ModelAndView categoryIndex() {
-        List<Category> listCategories = categoryRepository.findAll();
+    public ModelAndView categoryIndex(@RequestParam(value="page", required=false)Integer page, @RequestParam(value="keyword", required=false)String keyword, ModelMap modelMap) {
+        if (page == null || page < 0) {
+            page = 0;
+        }
 
-        return new ModelAndView("/admin/categories/index", "listCategories", listCategories);
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, "name"));
+        Pageable pageable = new PageRequest(page, 2, sort);
+
+        List<Category> listCategory;
+        List<Category> listCategoryPaging;
+        if (keyword == null) {
+            listCategory = categoryRepository.findAll();
+            listCategoryPaging = categoryRepository.paging(pageable);
+        } else {
+            listCategory = categoryRepository.findByNameContains(keyword);
+            listCategoryPaging = categoryRepository.findAndPaging(keyword, pageable);
+        }
+
+        int totalPage = (int)(Math.ceil((double)listCategory.size()/2));
+
+        if (page >= totalPage - 1) {
+            page = totalPage - 1;
+        }
+
+        modelMap.put("page", page);
+        modelMap.put("keyword", keyword);
+        modelMap.put("total_page", totalPage);
+
+        return new ModelAndView("/admin/categories/index", "listCategories", listCategoryPaging);
     }
 
     @RequestMapping(value="/error", method=RequestMethod.GET)

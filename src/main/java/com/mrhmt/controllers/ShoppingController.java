@@ -1,6 +1,7 @@
 package com.mrhmt.controllers;
 
 import com.mrhmt.entities.Cart;
+import com.mrhmt.entities.Product;
 import com.mrhmt.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,24 +36,52 @@ public class ShoppingController {
         return -1;
     }
 
+    private boolean syncAmountDB(int id, int quantity) {
+        Product product = productRepository.findOne(id);
+        int newAmount = product.getAmount() - quantity;
+
+        if (newAmount < 0) {
+            return false;
+        }
+
+        product.setAmount(newAmount);
+        productRepository.save(product);
+
+        return true;
+    }
+
     @RequestMapping(("/order"))
     public String order(@RequestParam int id, @RequestParam int quantity, HttpSession session) {
         List<Cart> myCart = (List<Cart>) session.getAttribute("cart");
 
         if (myCart == null) {
-            myCart = new ArrayList<>();
-            myCart.add(new Cart(productRepository.findOne(id), quantity));
+            if (syncAmountDB(id, quantity)) {
+                myCart = new ArrayList<>();
+                myCart.add(new Cart(productRepository.findOne(id), quantity));
+            } else {
+                return "redirect:error?message=out+of+stock";
+            }
         } else {
             int index = isExistItem(id, myCart);
             if (index == -1) {
-                myCart.add(new Cart(productRepository.findOne(id), quantity));
+                if (syncAmountDB(id, quantity)) {
+                    myCart.add(new Cart(productRepository.findOne(id), quantity));
+                } else {
+                    return "redirect:error?message=out+of+stock";
+                }
             } else {
                 int amount = myCart.get(index).getQuantity();
 
                 if (quantity + amount <= 0) {
+                    syncAmountDB(id, quantity);
+
                     myCart.remove(index);
                 } else {
-                    myCart.get(index).setQuantity(quantity + amount);
+                    if (syncAmountDB(id, quantity)) {
+                        myCart.get(index).setQuantity(quantity + amount);
+                    } else {
+                        return "redirect:error?message=out+of+stock";
+                    }
                 }
             }
         }
@@ -93,6 +122,8 @@ public class ShoppingController {
         }
 
         try {
+            syncAmountDB(id, myCart.get(index).getQuantity() * -1);
+
             myCart.remove(index);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -104,12 +135,15 @@ public class ShoppingController {
     }
 
     @RequestMapping("/checkout")
-    public ModelAndView checkout(HttpSession session) {
+    public ModelAndView checkout(ModelMap modelMap, HttpSession session) {
         List<Cart> myCart = (List<Cart>) session.getAttribute("cart");
+        double total = calTotal(myCart);
 
         if (myCart.isEmpty()) {
             return new ModelAndView("/error?message=empty+cart");
         }
+
+        modelMap.put("total", total);
 
         try {
             myCart.clear();
@@ -119,6 +153,6 @@ public class ShoppingController {
             return new ModelAndView("/error?message=cannot+clear+cart");
         }
 
-        return new ModelAndView("/shop/checkout");
+        return new ModelAndView("/shop/checkout", "myCart", myCart);
     }
 }

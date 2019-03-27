@@ -21,6 +21,24 @@
             <hr/>
             <a href="/admin/categories/create"><button class="btn btn-primary mb-2">Create new</button></a>
 
+            <form method="get" action="/admin/categories">
+                <div class="row mt-4">
+                    <div class="input-group mb-3">
+                        <input type="text" name="keyword" class="form-control" placeholder="Search..." value="${keyword}" aria-label="Search..." aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <c:if test="${total_page == 0}">
+                <div class="alert alert-primary">
+                    There is no result.
+                </div>
+            </c:if>
+
+            <c:if test="${total_page != 0}">
             <table class="table table-hover" style="width: 100%">
                 <thead>
                     <tr>
@@ -42,6 +60,29 @@
                 </c:forEach>
                 </tbody>
             </table>
+            </c:if>
+
+            <c:if test="${total_page != 0}">
+            <ul class="pagination">
+                <li class="page-item ${page <= 0 ? 'disabled' : ''}">
+                    <a class="page-link" href="/admin/categories?page=${page - 1}&keyword=${keyword}" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+                <c:if test="${page > 0}">
+                <li class="page-item"><a class="page-link" href="/admin/categories?page=${page - 1}&keyword=${keyword}">
+                    ${page}
+                </a></li>
+                </c:if>
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="#">${page + 1} <span class="sr-only">(current)</span></a>
+                </li>
+                <c:if test="${page < total_page - 1}">
+                <li class="page-item"><a class="page-link" href="/admin/categories?page=${page + 1}&keyword=${keyword}">${page + 2}</a></li>
+                </c:if>
+                <li class="page-item ${page >= total_page - 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="/admin/categories?page=${page + 1}&keyword=${keyword}">Next</a>
+                </li>
+            </ul>
+            </c:if>
         </div>
     </div>
 </div>

@@ -48,17 +48,24 @@
                 </a>
             </div>
 
-            <form:form method="post" action="/search">
+            <form method="get" action="/index">
                 <div class="row mt-4">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Search..." aria-label="Search..." aria-describedby="button-addon2">
+                        <input type="text" name="keyword" class="form-control" placeholder="Search..." value="${keyword}" aria-label="Search..." aria-describedby="button-addon2">
                         <div class="input-group-append">
                             <button class="btn btn-outline-primary" type="submit" id="button-addon2">Search</button>
                         </div>
                     </div>
                 </div>
-            </form:form>
+            </form>
 
+            <c:if test="${total_page == 0}">
+                <div class="alert alert-primary">
+                    There is no result.
+                </div>
+            </c:if>
+
+            <c:if test="${total_page != 0}">
             <div class="row">
                 <c:forEach var="item" items="${listProduct}">
                     <div class="col-lg-4 col-md-6 mb-4">
@@ -70,6 +77,7 @@
                                 </h4>
                                 <h5>$${item.price}</h5>
                                 <p class="card-text">${item.description}</p>
+                                <p class="card-text">Stock: ${item.amount}</p>
                             </div>
                             <div class="card-footer">
                                 <a href="/product?id=${item.id}"><button class="btn btn-info">Details</button></a>
@@ -79,6 +87,29 @@
                     </div>
                 </c:forEach>
             </div>
+            </c:if>
+
+            <c:if test="${total_page != 0}">
+                <ul class="pagination">
+                    <li class="page-item ${page <= 0 ? 'disabled' : ''}">
+                        <a class="page-link" href="/index?page=${page - 1}&keyword=${keyword}" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <c:if test="${page > 0}">
+                        <li class="page-item"><a class="page-link" href="/index?page=${page - 1}&keyword=${keyword}">
+                                ${page}
+                        </a></li>
+                    </c:if>
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="#">${page + 1} <span class="sr-only">(current)</span></a>
+                    </li>
+                    <c:if test="${page < total_page - 1}">
+                        <li class="page-item"><a class="page-link" href="/index?page=${page + 1}&keyword=${keyword}">${page + 2}</a></li>
+                    </c:if>
+                    <li class="page-item ${page >= total_page - 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="/index?page=${page + 1}&keyword=${keyword}">Next</a>
+                    </li>
+                </ul>
+            </c:if>
         </div>
     </div>
 </div>

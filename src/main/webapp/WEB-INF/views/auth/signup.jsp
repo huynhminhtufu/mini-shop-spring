@@ -22,11 +22,15 @@
                 <hr/>
                 <div class="form-group">
                     <label>Username</label>
-                    <form:input path="username" type="text" class="form-control" name="username" placeholder="Enter username"/>
+                    <form:input path="username" type="text" class="form-control" name="username" placeholder="Enter username" required="true"/>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <form:input path="password" type="password" class="form-control" name="password" placeholder="Password"/>
+                    <form:input path="password" type="password" class="form-control" name="password" id="password" placeholder="Password" required="true"/>
+                </div>
+                <div class="form-group">
+                    <label>Verify Password</label>
+                    <input type="password" class="form-control" name="verifypassword" id="verifypassword" placeholder="Password" required="true" />
                 </div>
                 <button type="submit" class="btn btn-primary">Signup</button>
                 <a href="/auth/login"><button type="button" class="btn btn-secondary">Login</button></a>
@@ -39,6 +43,20 @@
             </form:form>
         </div>
     </div>
+    <script>
+        var password = document.getElementById("password"), confirm_password = document.getElementById("verifypassword");
+
+        function validatePassword(){
+            if(password.value !== confirm_password.value) {
+                confirm_password.setCustomValidity("Passwords Don't Match");
+            } else {
+                confirm_password.setCustomValidity('');
+            }
+        }
+
+        password.onchange = validatePassword;
+        confirm_password.onkeyup = validatePassword;
+    </script>
 </div>
 </body>
 </html>

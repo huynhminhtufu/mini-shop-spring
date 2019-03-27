@@ -24,6 +24,11 @@
             <div class="row mt-4 mb-4">
                 <h2>Category ${category.name}</h2>
             </div>
+            <c:if test="${listProduct == null || listProduct.size() == 0}">
+            <div class="alert alert-primary">
+                No product in this category!
+            </div>
+            </c:if>
             <div class="row">
                 <c:forEach var="item" items="${listProduct}">
                     <div class="col-lg-4 col-md-6 mb-4">

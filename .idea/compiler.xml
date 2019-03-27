@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="MiniProject" options="-endorseddirs $PROJECT_DIR$/target/endorsed" />
+      <module name="MiniProject" options="-endorseddirs /Users/tuhuynh/Desktop/Java/MiniProject/target/endorsed" />
     </option>
   </component>
 </project>

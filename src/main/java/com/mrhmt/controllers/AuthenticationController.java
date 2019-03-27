@@ -65,6 +65,10 @@ public class AuthenticationController {
             return "redirect:error?message=null+field";
         }
 
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            return "redirect:error?message=duplicate+username";
+        }
+
         userRepository.save(user);
         roleRepository.save(new Role("ROLE_USER", user));
 

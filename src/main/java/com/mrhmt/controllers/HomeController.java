@@ -5,6 +5,9 @@ import com.mrhmt.entities.Product;
 import com.mrhmt.repositories.CategoryRepository;
 import com.mrhmt.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +25,37 @@ public class HomeController {
     private ProductRepository productRepository;
 
     @RequestMapping(value={"", "/index"})
-    public ModelAndView index(ModelMap modelMap) {
-        List<Category> listCategory = categoryRepository.findAll();
-        List<Product> listProduct = productRepository.findAll();
+    public ModelAndView index(@RequestParam(value="page", required=false)Integer page, @RequestParam(value="keyword", required=false)String keyword, ModelMap modelMap) {
+        if (page == null || page < 0) {
+            page = 0;
+        }
 
-        modelMap.put("listProduct", listProduct);
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, "name"));
+        Pageable pageable = new PageRequest(page, 2, sort);
+
+        List<Product> listProduct;
+        List<Product> listProductPaging;
+
+        if (keyword == null) {
+            listProduct = productRepository.findAll();
+            listProductPaging = productRepository.paging(pageable);
+        } else {
+            listProduct = productRepository.findByNameContains(keyword);
+            listProductPaging = productRepository.findAndPaging(keyword, pageable);
+        }
+
+        int totalPage = (int)(Math.ceil((double)listProduct.size()/2));
+
+        if (page >= totalPage - 1) {
+            page = totalPage - 1;
+        }
+
+        modelMap.put("page", page);
+        modelMap.put("keyword", keyword);
+        modelMap.put("total_page", totalPage);
+        modelMap.put("listProduct", listProductPaging);
+
+        List<Category> listCategory = categoryRepository.findAll();
 
         return new ModelAndView("index", "listCategory", listCategory);
     }

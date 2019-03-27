@@ -25,6 +25,7 @@
                     <h3 class="card-title">${product.name}</h3>
                     <h4>$${product.price}</h4>
                     <p class="card-text">${product.description}</p>
+                    <p class="card-text">Stock: ${product.amount}</p>
                     <a href="/shop/order?id=${product.id}&quantity=1"><button class="btn btn-primary">Add to cart</button></a>
                 </div>
             </div>
