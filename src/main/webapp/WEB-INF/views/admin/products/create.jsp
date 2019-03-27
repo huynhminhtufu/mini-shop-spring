@@ -47,7 +47,7 @@
                 </div>
                 <div class="form-group">
                     <label for="thumbnail">Thumbnail</label>
-                    <form:input path="thumbnail" type="text" class="form-control" id="thumbnail"/>
+                    <form:input path="thumbnail" type="text" class="form-control" id="thumbnail" value="https://cdn.tgdd.vn/Products/Images/42/113263/samsung-galaxy-s9-black-600x600.jpg"/>
                 </div>
                 <button type="submit" class="btn btn-primary">Create new product</button>
             </form:form>

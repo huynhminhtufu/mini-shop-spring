@@ -36,7 +36,7 @@
                             <a href="#"><img class="card-img-top" src="${item.thumbnail}" alt=""></a>
                             <div class="card-body">
                                 <h4 class="card-title">
-                                    <a href="/product/${item.id}">${item.name}</a>
+                                    <a href="/product?id=${item.id}">${item.name}</a>
                                 </h4>
                                 <h5>$${item.price}</h5>
                                 <p class="card-text">${item.description}</p>
